@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -euox pipefail
 
 print_usage() {
     >&2 echo "Usage: $0 <your.domain.com> [<dns server>]"
@@ -39,18 +39,18 @@ fi
 
 echo "Removing existing installation if exists ..."
 
-k3d delete cluster gitlab || true
-k3d delete cluster gitpod || true
+k3d cluster delete gitlab || true
+k3d cluster delete gitpod || true
 docker stop nginx-proxy || true
 
 
 # GitLab
 echo "Installing GitLab cluster ..."
 
-k3d create cluster \
+k3d cluster create \
     -p 1443:443@loadbalancer \
     --k3s-server-arg --disable=traefik \
-    --switch \
+    --kubeconfig-switch-context \
     gitlab
 
 if [[ -n "$DNSSERVER" ]]; then
@@ -77,11 +77,11 @@ helm install gitlab gitlab/gitlab \
 echo "Installing Gitpod cluster ..."
 
 mkdir -p /tmp/workspaces
-k3d create cluster \
+k3d cluster create \
     -p 2443:443@loadbalancer \
     -v /tmp/workspaces:/var/gitpod/workspaces:shared \
     --k3s-server-arg --disable=traefik \
-    --switch \
+    --kubeconfig-switch-context \
     gitpod
 
 if [[ -n "$DNSSERVER" ]]; then
@@ -90,7 +90,7 @@ if [[ -n "$DNSSERVER" ]]; then
         sed -e "s+.:53+$DOMAIN {\\\\n  forward . $DNSSERVER\\\\n}\\\\n.:53+g" | \
         kubectl apply -f -
 fi
-docker exec k3d-gitpod-master-0 mount --make-shared /sys/fs/cgroup
+docker exec k3d-gitpod-server-0 mount --make-shared /sys/fs/cgroup
 
 cd "$GPSH_DIR"
 helm repo add charts.gitpod.io https://charts.gitpod.io
@@ -126,7 +126,7 @@ kubectl delete networkpolicies.networking.k8s.io --all
 
 # Add GitLab OAuth config
 echo "Adding GitLab OAuth config ..."
-k3d get kubeconfig gitlab --switch
+export KUBECONFIG=$(k3d kubeconfig merge gitlab --kubeconfig-switch-context)
 
 # Wait for GitLab DB
 echo "Waiting for GitLab DB ..."

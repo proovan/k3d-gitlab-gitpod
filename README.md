@@ -58,9 +58,9 @@ where `dev.example.com` is your base domain and `10.0.0.1` is your DNS server th
 
 When the installation script has been terminated, you could check if everything is up and running by the following commands:
 ```shell
-$ k3d get kubeconfig gitlab --switch
+$ export KUBECONFIG=$(k3d kubeconfig merge gitlab --kubeconfig-switch-context)
 $ kubectl get pods
-$ k3d get kubeconfig gitpod --switch
+$ export KUBECONFIG=$(k3d kubeconfig merge gitpod --kubeconfig-switch-context)
 $ kubectl get pods
 ```
 All pods should be `Running` or `Completed`. It takes some time if everything is up and running.
@@ -89,7 +89,7 @@ We remove the network policies of Gitpod since them prevent us from reaching Git
 
 When a Gitpod workspace starts, the content will be cloned from the repository. For this, we mount the host folder `/tmp/workspaces` into the Gitpod cluster. Feel free to change the path according your needs in the installation script.
 
-To allow Gitpod to mount `/sys/fs/cgroup` the installation script runs the following in the master node container:
+To allow Gitpod to mount `/sys/fs/cgroup` the installation script runs the following in the server node container:
 ```shell
 $ mount --make-shared /sys/fs/cgroup
 ```

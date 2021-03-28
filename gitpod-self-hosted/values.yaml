@@ -23,8 +23,8 @@ gitpod:
     protocol: "https"
     type: "GitLab"
     oauth:
-      clientId: "2ce8bfb95d9a1e0ed305427f35e10a6bdd1eef090b1890c68e5f8370782d05ee"
-      clientSecret: "a5447d23643f7e71353d9fc3ad1c15464c983c47f6eb2e80dd37de28152de05e"
+      clientId: "a6bdd1eef090b1890c68e5f8370782d05ee2ce8bfb95d9a1e0ed305427f35e10"
+      clientSecret: "5464c983c47f6eb2e80dd37de28152de05ea5447d23643f7e71353d9fc3ad1c1"
       callBackUrl: "https://gitpod.example.com/auth/gitlab/callback"
       settingsUrl: "gitlab.example.com/profile/applications"
 
