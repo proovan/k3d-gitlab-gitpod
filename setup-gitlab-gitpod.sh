@@ -51,6 +51,7 @@ k3d cluster create \
     -p 1443:443@loadbalancer \
     --k3s-server-arg --disable=traefik \
     --kubeconfig-switch-context \
+    --k3s-server-arg --tls-san=192.168.1.11 \
     gitlab
 
 if [[ -n "$DNSSERVER" ]]; then
@@ -82,6 +83,7 @@ k3d cluster create \
     -v /tmp/workspaces:/var/gitpod/workspaces:shared \
     --k3s-server-arg --disable=traefik \
     --kubeconfig-switch-context \
+    --k3s-server-arg --tls-san=192.168.1.11 \
     gitpod
 
 if [[ -n "$DNSSERVER" ]]; then
